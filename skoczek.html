@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Skoczek Szachowy</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1200 / 800, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(1200, 800);
+    document.body.appendChild(renderer.domElement);
+
+    const light = new THREE.PointLight(0xFFFFFF);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+
+    const material = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
+
+    const knight = new THREE.Group();
+
+    const baseGeometry = new THREE.CylinderGeometry(2, 2, 1, 32);
+    const base = new THREE.Mesh(baseGeometry, material);
+    base.position.y = -1.5;
+    knight.add(base);
+
+    const BodyCurve = new THREE.Curve();
+    BodyCurve.getPoint = function (t) {
+        const tx = 0;
+        const ty = t * 5;
+        const tz = Math.sin(t * Math.PI) * 1 - 1;
+        return new THREE.Vector3(tx, ty, tz);
+    };
+
+    const bodyGeometry = new THREE.TubeGeometry(BodyCurve, 64, 0.8, 8);
+    const body = new THREE.Mesh(bodyGeometry, material);
+    body.position.y = -2;
+    body.position.z = 1;
+    body.rotation.y = Math.PI * 2 ;
+    knight.add(body);
+
+    const Body2Curve = new THREE.Curve();
+    Body2Curve.getPoint = function (t) {
+        const tx = 0;
+        const ty = t * 3.5; 
+        const tz = Math.sin(t * Math.PI) * 1.5 - 0.5; 
+        return new THREE.Vector3(tx, ty, tz);
+    };
+
+    const body2Geometry = new THREE.TubeGeometry(Body2Curve, 64, 1, 8);
+    const body2 = new THREE.Mesh(body2Geometry, material);
+    body2.position.y = -2;
+    body2.position.z = 0;
+    body2.rotation.y = Math.PI;
+    knight.add(body2);
+
+    const hairGeometry = new THREE.TubeGeometry(Body2Curve, 4, 0.6, 8);
+    const hair = new THREE.Mesh(hairGeometry, material);
+    hair.position.set(0, 1, 1.2); 
+    hair.rotation.Y = Math.PI / 2; 
+    knight.add(hair);
+
+    const headGeometry = new THREE.CylinderGeometry(1.2, 0.7, 3, 32);
+    const head = new THREE.Mesh(headGeometry, material);
+    head.position.y = 3;
+    head.rotation.x = Math.PI / 2 * 0.95;
+    knight.add(head);
+
+    knight.rotation.y = Math.PI / 2;
+    scene.add(knight);
+
+    camera.position.z = 7;
+
+    renderer.render(scene, camera);
+
+</script>
+</body>
+</html>
